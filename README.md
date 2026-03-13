@@ -1,2 +1,2 @@
 # Python-JLT-BusSchedule-Scraper
-Python library that scrapes Krog &amp; Co calendar pages and converts them a calendar
+Python library that scrapes the JLT site for bus schedules. 
