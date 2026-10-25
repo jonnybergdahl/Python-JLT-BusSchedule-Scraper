@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jlt-bus-schedule"
+dynamic = ["version"]
+description = "Async client that scrapes bus departures and stops from JLT (Jönköpings Länstrafik)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Jonny Bergdahl" }]
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp>=3.9",
+    "beautifulsoup4>=4.12.0",
+    # Windows has no system timezone database for zoneinfo
+    "tzdata; sys_platform == 'win32'",
+]
+keywords = ["jlt", "jönköping", "bus", "public transport", "home assistant"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries",
+    "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+]
+
+[project.urls]
+Homepage = "https://github.com/jonnybergdahl/Python-JLT-BusSchedule-Scraper"
+Issues = "https://github.com/jonnybergdahl/Python-JLT-BusSchedule-Scraper/issues"
+
+[tool.hatch.version]
+path = "src/jlt_bus_schedule/const.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "live: tests that call the live jlt.se site, deselect with '-m \"not live\"'",
+]
+
+[tool.ruff.lint]
+select = ["B", "D", "E", "F", "I", "RUF", "SLF", "UP"]
+ignore = ["D203", "D213", "E501"]
+
+[tool.ruff.lint.isort]
+force-sort-within-sections = true
+combine-as-imports = true
