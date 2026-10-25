@@ -11,7 +11,7 @@ import pytest
 from jlt_bus_schedule import (
     API_URL,
     JLT_TIMEZONE,
-    USER_AGENT,
+    USER_AGENTS,
     JltApiClient,
     JltConnectionError,
     Stop,
@@ -32,7 +32,23 @@ async def test_client_fetches_departures(mock_jlt: MockJlt) -> None:
     assert len(mock_jlt.requests) == 1
     request = mock_jlt.requests[0]
     assert request.query == {"fromId": str(STOP_ID), "take": "20"}
-    assert request.headers["User-Agent"] == USER_AGENT
+    assert request.headers["User-Agent"] in USER_AGENTS
+
+
+async def test_client_rotates_user_agent(
+    mock_jlt: MockJlt, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Test that each request picks a new User-Agent from the pool."""
+    picks = iter(USER_AGENTS[:2])
+    monkeypatch.setattr(client.random, "choice", lambda _: next(picks))
+
+    async with aiohttp.ClientSession() as session:
+        jlt = JltApiClient(session)
+        await jlt.async_get_departures(STOP_ID)
+        await jlt.async_get_departures(STOP_ID)
+
+    seen = [request.headers["User-Agent"] for request in mock_jlt.requests]
+    assert seen == list(USER_AGENTS[:2])
 
 
 async def test_client_custom_user_agent(mock_jlt: MockJlt) -> None:

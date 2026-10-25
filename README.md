@@ -62,7 +62,9 @@ client = JltApiClient(async_get_clientsession(hass))
 Without a session the client creates its own, which is closed by `await client.close()` or when
 leaving an `async with` block.
 
-A custom `User-Agent` header can be set with `JltApiClient(session, user_agent="MyApp/1.0")`.
+Each request uses a `User-Agent` picked at random from a pool of common desktop browsers
+(`USER_AGENTS`). A fixed `User-Agent` header can be set with
+`JltApiClient(session, user_agent="MyApp/1.0")`.
 
 ## API
 

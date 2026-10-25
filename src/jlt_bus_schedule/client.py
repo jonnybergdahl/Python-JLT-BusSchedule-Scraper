@@ -8,13 +8,14 @@ planner that jlt.se embeds from etiscloud.net.
 from __future__ import annotations
 
 import asyncio
+import random
 from datetime import datetime
 from types import TracebackType
 from typing import Self
 
 import aiohttp
 
-from .const import API_URL, JLT_TIMEZONE, STOP_SEARCH_URL, USER_AGENT
+from .const import API_URL, JLT_TIMEZONE, STOP_SEARCH_URL, USER_AGENTS
 from .exceptions import JltConnectionError
 from .models import Departure, Stop
 from .parser import parse_departures, parse_stops
@@ -26,12 +27,15 @@ class JltApiClient:
     Pass an existing aiohttp session to share it with the rest of the
     application. Without one, the client creates its own session, which is
     closed by close() or when leaving an ``async with`` block.
+
+    Each request uses a User-Agent picked at random from USER_AGENTS, unless
+    a fixed ``user_agent`` is given.
     """
 
     def __init__(
         self,
         session: aiohttp.ClientSession | None = None,
-        user_agent: str = USER_AGENT,
+        user_agent: str | None = None,
     ) -> None:
         """Initialize the client."""
         self._session = session
@@ -69,7 +73,11 @@ class JltApiClient:
         try:
             async with asyncio.timeout(timeout):
                 async with self._session.get(
-                    url, params=params, headers={"User-Agent": self._user_agent}
+                    url,
+                    params=params,
+                    headers={
+                        "User-Agent": self._user_agent or random.choice(USER_AGENTS)
+                    },
                 ) as response:
                     response.raise_for_status()
                     return await response.text()
