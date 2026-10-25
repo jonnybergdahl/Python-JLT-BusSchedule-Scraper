@@ -70,7 +70,7 @@ A custom `User-Agent` header can be set with `JltApiClient(session, user_agent="
 
 | Method | Description |
 |--------|-------------|
-| `async_get_departures(stop_id, take=20, timeout=10)` | Upcoming departures for all lines at a stop, as a list of `Departure`. Departures that have already left are skipped. |
+| `async_get_departures(stop_id, take=20, timeout=10)` | Upcoming departures for all lines at a stop, as a list of `Departure`. Departures that have already left are skipped, but JLT counts them in `take`, so fewer than `take` departures may be returned. |
 | `async_search_stops(query, timeout=10)` | Stops matching a name, best match first, as a list of `Stop`. |
 | `close()` | Close the session, if it was created by the client. |
 
