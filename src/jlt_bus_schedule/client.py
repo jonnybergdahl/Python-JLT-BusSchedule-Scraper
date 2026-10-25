@@ -8,7 +8,6 @@ planner that jlt.se embeds from etiscloud.net.
 from __future__ import annotations
 
 import asyncio
-import random
 from datetime import datetime
 import random
 from types import TracebackType
